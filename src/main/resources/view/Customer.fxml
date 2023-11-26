@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="685.0" prefWidth="965.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.CustomerController">
+   <children>
+      <TextField fx:id="txtName" layoutX="220.0" layoutY="103.0" />
+      <TextField fx:id="txtAddress" layoutX="393.0" layoutY="103.0" />
+      <TextField fx:id="txtCustId" layoutX="78.0" layoutY="103.0" prefHeight="25.0" prefWidth="121.0" />
+      <TextField fx:id="txtSalary" layoutX="561.0" layoutY="103.0" />
+      <Label layoutX="220.0" layoutY="83.0" prefHeight="20.0" prefWidth="75.0" text="Name">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="78.0" layoutY="83.0" prefHeight="17.0" prefWidth="20.0" text="ID">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="392.0" layoutY="83.0" prefHeight="20.0" prefWidth="75.0" text="Address">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="561.0" layoutY="83.0" prefHeight="20.0" prefWidth="75.0" text="Salary">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <JFXButton fx:id="addBtn" buttonType="RAISED" layoutX="731.0" layoutY="102.0" onAction="#addButton" prefHeight="27.0" prefWidth="75.0" style="-fx-border-color: black;" text="Add" />
+      <TableView fx:id="tblCustomer" layoutX="37.0" layoutY="158.0" prefHeight="420.0" prefWidth="869.0">
+        <columns>
+          <TableColumn fx:id="colId" prefWidth="95.0" text="ID" />
+          <TableColumn fx:id="colName" prefWidth="165.0" text="Name" />
+            <TableColumn fx:id="colAddress" prefWidth="281.0" text="Address" />
+            <TableColumn fx:id="colSalary" prefWidth="173.0" text="Salary" />
+            <TableColumn fx:id="colOption" prefWidth="154.0" text="option" />
+        </columns>
+      </TableView>
+      <JFXButton fx:id="reloadBtn" buttonType="RAISED" layoutX="819.0" layoutY="598.0" onAction="#reload" prefHeight="41.0" prefWidth="87.0" style="-fx-border-color: black;" text="Reload" />
+      <JFXButton fx:id="updateBtn" buttonType="RAISED" layoutX="818.0" layoutY="102.0" onAction="#update" prefHeight="27.0" prefWidth="75.0" style="-fx-border-color: black;" text="Update" />
+      <JFXButton layoutX="14.0" layoutY="28.0" onAction="#goBack" prefHeight="38.0" prefWidth="27.0" style="-fx-border-color: black; -fx-border-radius: 12;" text=" ">
+         <graphic>
+            <ImageView fitHeight="30.0" fitWidth="38.0" pickOnBounds="true">
+               <image>
+                  <Image url="@../img/backico.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </JFXButton>
+   </children>
+</AnchorPane>
