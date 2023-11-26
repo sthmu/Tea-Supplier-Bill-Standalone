@@ -1,11 +1,3 @@
-/*
- *Bill Receipt Printer Application
- * v 1.0
- * Developed by Aman Nirala
- * Email - amansofttechinfo@gmail.com
- * Website - http://www.amansofttechinfo.weebly.com
- * COmpany - AmanSoft Developers
- */
 
 import java.awt.*;
 import java.awt.print.*;
