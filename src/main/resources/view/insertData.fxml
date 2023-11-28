@@ -139,7 +139,7 @@
                   </AnchorPane>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="5">
                      <children>
-                        <JFXTextField layoutX="28.0" layoutY="40.0" prefHeight="26.0" prefWidth="242.0" style="-fx-background-color: white;">
+                        <JFXTextField fx:id="txtAdvance" layoutX="28.0" layoutY="40.0" prefHeight="26.0" prefWidth="242.0" style="-fx-background-color: white;">
                            <font>
                               <Font size="15.0" />
                            </font>
@@ -153,12 +153,12 @@
                   </AnchorPane>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="6">
                      <children>
-                        <JFXTextField editable="false" layoutX="28.0" layoutY="40.0" prefHeight="26.0" prefWidth="242.0" style="-fx-background-color: white;">
+                        <JFXTextField fx:id="txtOther" layoutX="28.0" layoutY="40.0" prefHeight="26.0" prefWidth="242.0" style="-fx-background-color: white;">
                            <font>
                               <Font size="15.0" />
                            </font>
                         </JFXTextField>
-                        <Label layoutX="28.0" layoutY="23.0" text="Label" textFill="WHITE">
+                        <Label layoutX="28.0" layoutY="23.0" text="වෙනත්" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

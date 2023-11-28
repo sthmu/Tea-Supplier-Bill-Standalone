@@ -6,12 +6,12 @@ import java.awt.print.*;
 
 
 
-class print implements Printable {
+class Print implements Printable {
     public static void main(String[] args) {
-        new print();
+        new Print();
     }
 
-    public print() {
+    public Print() {
         PrinterJob printjob = PrinterJob.getPrinterJob();
         printjob.setPrintable(this, getPageFormat(printjob));
         if (printjob.printDialog()) {
