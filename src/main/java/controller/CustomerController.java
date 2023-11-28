@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
-import java.util.concurrent.Flow;
+
 import db.*;
 
 import static javafx.collections.FXCollections.observableArrayList;
@@ -37,7 +37,7 @@ public class CustomerController implements Initializable {
     private TextField txtCustId;
 
     @FXML
-    private TextField txtSalary;
+    private TextField txtPhone;
 
     @FXML
     private JFXButton addBtn;
@@ -74,7 +74,7 @@ public class CustomerController implements Initializable {
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colName.setCellValueFactory(new PropertyValueFactory<>("name"));
         colAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
-        colSalary.setCellValueFactory(new PropertyValueFactory<>("salary"));
+        colSalary.setCellValueFactory(new PropertyValueFactory<>("phone"));
         colOption.setCellValueFactory(new PropertyValueFactory<Object, Button>("btn"));
         System.out.println("initialize method run");
         loadCustomerTable();
@@ -91,7 +91,7 @@ public class CustomerController implements Initializable {
             txtCustId.setText(customer.getId());
             txtName.setText(customer.getName());
             txtAddress.setText(customer.getAddress());
-            txtSalary.setText(String.valueOf(customer.getSalary()));
+            txtPhone.setText(String.valueOf(customer.getPhone()));
         }
     }
 
@@ -111,7 +111,7 @@ public class CustomerController implements Initializable {
                         result.getString(1),
                         result.getString(2),
                         result.getString(3),
-                        result.getDouble(4),
+                        result.getString(4),
                         btn
                 );
 
@@ -161,7 +161,7 @@ public class CustomerController implements Initializable {
     }
 
     private void clearFields() {
-        txtSalary.clear();
+        txtPhone.clear();
         txtAddress.clear();
         txtName.clear();
         txtCustId.clear();
@@ -171,7 +171,7 @@ public class CustomerController implements Initializable {
     public void update(javafx.event.ActionEvent actionEvent) {
         String sql="UPDATE customer SET name='" +txtName.getText()+ "',"+
                 "address='"+txtAddress.getText()+"',"+
-                "salary='" +txtSalary.getText()+"'"+
+                "phone='" + txtPhone.getText()+"'"+
                 "WHERE id='"+txtCustId.getText()+"'";
         try {
             Statement stmt = conn.createStatement();
@@ -190,10 +190,11 @@ public class CustomerController implements Initializable {
 
     public void addButton(ActionEvent actionEvent) {
 
-        Customer c = new Customer((txtCustId.getText()), txtName.getText(), txtAddress.getText(), Double.parseDouble(txtSalary.getText()));
-        String sql = "INSERT INTO CUSTOMER (id,name,address,salary) values('" + c.getId() + "','" + c.getName() + "','" + c.getAddress() + "'," + c.getSalary() + ")";
+        Customer c = new Customer((txtCustId.getText()), txtName.getText(), txtAddress.getText(), txtPhone.getText());
+        String sql = "INSERT INTO customer (id,name,address,phone) values('" + c.getId() + "','" + c.getName() + "','" + c.getAddress() + "','" + c.getPhone() + "')";
 
         try {
+            System.out.println(sql+"this is the sql code that has a issue maybe");
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/thogakade", "root", "root");
             Statement stmt = conn.createStatement();

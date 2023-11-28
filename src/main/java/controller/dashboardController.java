@@ -64,4 +64,15 @@ public class dashboardController {
         }
 
     }
+
+    public void goToCheck(ActionEvent actionEvent) {
+        Stage stage=(Stage) pane.getScene().getWindow();
+        try {
+            stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("../view/insertData.fxml"))));
+            stage.show();
+        } catch (IOException e) {
+            System.out.println("dashboardController goto items Error");
+            throw new RuntimeException(e);
+        }
+    }
 }

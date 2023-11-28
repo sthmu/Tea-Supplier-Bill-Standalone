@@ -6,7 +6,7 @@ public class CustomerTm {
     private String id;
     private String name;
     private String address;
-    private double salary;
+    private String phone;
     private Button btn;
 
     public Button getBtn() {
@@ -19,11 +19,11 @@ public class CustomerTm {
 
 
 
-    public CustomerTm(String id, String name, String address, double salary,Button btn) {
+    public CustomerTm(String id, String name, String address, String phone, Button btn) {
         this.id = id;
         this.name = name;
         this.address = address;
-        this.salary = salary;
+        this.phone = phone;
         this.btn=btn;
     }
 
@@ -33,7 +33,7 @@ public class CustomerTm {
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
-                ", salary=" + salary +
+                ", salary=" + phone +
                 ", btn=" + btn +
                 '}';
     }
@@ -62,11 +62,11 @@ public class CustomerTm {
         this.address = address;
     }
 
-    public double getSalary() {
-        return salary;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setSalary(double salary) {
-        this.salary = salary;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

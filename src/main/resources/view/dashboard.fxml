@@ -8,7 +8,7 @@
 
 <AnchorPane fx:id="pane" prefHeight="643.0" prefWidth="808.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.dashboardController">
    <children>
-      <JFXButton layoutX="42.0" layoutY="340.0" onAction="#goToCustomer" prefHeight="48.0" prefWidth="167.0" style="-fx-background-color: white;" text="Orders">
+      <JFXButton layoutX="42.0" layoutY="340.0" onAction="#goToCheck" prefHeight="48.0" prefWidth="167.0" style="-fx-background-color: white;" text="Insert Data">
          <font>
             <Font size="22.0" />
          </font>
@@ -31,12 +31,17 @@
                </font>
             </Label>
          </children></HBox>
-      <JFXButton layoutX="42.0" layoutY="177.0" onAction="#goToCustomer" prefHeight="48.0" prefWidth="167.0" style="-fx-background-color: white;" text="Customer">
+      <JFXButton layoutX="42.0" layoutY="177.0" onAction="#goToCustomer" prefHeight="48.0" prefWidth="167.0" style="-fx-background-color: white;" text="Suppliers">
          <font>
             <Font size="22.0" />
          </font>
       </JFXButton>
-      <JFXButton layoutX="42.0" layoutY="259.0" onAction="#goToItems" prefHeight="48.0" prefWidth="167.0" style="-fx-background-color: white;" text="Item">
+      <JFXButton layoutX="42.0" layoutY="259.0" onAction="#goToItems" prefHeight="48.0" prefWidth="167.0" style="-fx-background-color: white;" text="Records">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </JFXButton>
+      <JFXButton layoutX="42.0" layoutY="412.0" onAction="#goToItems" prefHeight="48.0" prefWidth="167.0" style="-fx-background-color: white;" text="Print Bills">
          <font>
             <Font size="22.0" />
          </font>

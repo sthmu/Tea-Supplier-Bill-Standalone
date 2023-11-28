@@ -5,7 +5,7 @@ public class Customer {
     private String id;
     private String name;
     private String address;
-    private double salary;
+    private String phone;
 
 
     public String getId() {
@@ -22,15 +22,15 @@ public class Customer {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
-                ", salary=" + salary +
+                ", salary=" + phone +
                 '}';
     }
 
-    public Customer(String id, String name, String address, double salary) {
+    public Customer(String id, String name, String address, String phone) {
         this.id = id;
         this.name = name;
         this.address = address;
-        this.salary = salary;
+        this.phone = phone;
     }
 
     public String getName() {
@@ -49,11 +49,11 @@ public class Customer {
         this.address = address;
     }
 
-    public double getSalary() {
-        return salary;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setSalary(double salary) {
-        this.salary = salary;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }
