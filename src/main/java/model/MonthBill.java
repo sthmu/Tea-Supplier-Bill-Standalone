@@ -11,6 +11,15 @@ public class MonthBill {
     public static void setKgPrice(double kgPrice) {
         MonthBill.kgPrice = kgPrice;
     }
+    private String id;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     private String year;
     private String month;
@@ -30,7 +39,14 @@ public class MonthBill {
 
 
     //SUMS
-    private final int[] kgs=new int[31];
+    private int[] kgs=new int[31];
+    public int getKgAmount(){
+        int tempSum=0;
+        for(int i=0;i<31;i++){
+             tempSum+= kgs[i];
+        }
+        return tempSum;
+    }
 
     public String getYear() {
         return year;
@@ -61,6 +77,9 @@ public class MonthBill {
     }
 
     public double getGrossTeaSum() {
+        for(int i=0;i<31;i++){
+            grossTeaSum += kgs[i]*kgPrice;
+        }
         return grossTeaSum;
     }
 
@@ -133,10 +152,15 @@ public class MonthBill {
     }
 
 
+    public double getWholeSub() {
+        double wholeSub=transportSub +teaSub +containerSub +fertilizerSub +otherSub +advanceSub;
+
+        return wholeSub;
+    }
 
 
-
-
-
+    public double getBalance() {
+       return getWholeSum()-getWholeSub();
+    }
 
 }

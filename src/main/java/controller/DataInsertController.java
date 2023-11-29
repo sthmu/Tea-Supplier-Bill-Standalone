@@ -10,14 +10,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import model.MonthBill;
+import model.tm.Kgtm;
 
 import java.io.IOException;
 import java.net.URL;
@@ -25,6 +24,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 public class DataInsertController implements Initializable {
@@ -40,9 +40,11 @@ public class DataInsertController implements Initializable {
     public Label lbltTeaSum;
     public Label lblOtherSum;
     public Label lblWholeSum;
-    public JFXTreeTableView tblKg;
-    public TreeTableColumn colDate;
-    public TreeTableColumn colKg;
+    public TableView<Kgtm> tblKg;
+    public TableColumn colDate;
+    public TableColumn colKg;
+
+
     Connection conn = DBConnection.getConnection();
     public GridPane pane;
     public JFXTextField txtFieldContainCost;
@@ -56,6 +58,8 @@ public class DataInsertController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        colDate.setCellValueFactory(new PropertyValueFactory<>("day"));
+        colDate.setCellValueFactory(new PropertyValueFactory<>("kg"));
 
         try {
             customerCombo.setItems(getCustomerNameList());
@@ -92,14 +96,61 @@ public class DataInsertController implements Initializable {
             ResultSet result=stmt.executeQuery(sql);
             MonthBill bill =new MonthBill();
             if(result.isBeforeFirst()){
-                while(result.next()){
+                //create the correct data format for the table view
+                ObservableList<Kgtm> kglist=FXCollections.observableArrayList();
 
-                }
+                int kgs = 0;
+                double teaPacketC =0;
+                double containerC =0;
+                double fertilizerC =0;
+                double otherC =0;
+                double advance =0;
+                while(result.next()) {
+
+                    //making it clearer by using variables for each part
+                    int day = Integer.parseInt((result.getString(2)).split("-")[2]);
+                    int kg=Integer.parseInt(result.getString(3));
+                    kgs += kg;
+                    teaPacketC += Double.parseDouble(result.getString(4));
+                    containerC += Double.parseDouble(result.getString(5));
+                    fertilizerC += Double.parseDouble(result.getString(6));
+                    otherC += Double.parseDouble(result.getString(7));
+                    advance += Double.parseDouble(result.getString(8));
+
+                    Kgtm kgtblrow = new Kgtm(day, kg);
+                    kglist.add(kgtblrow);
+                    bill.getKgs()[day-1]=kg;
+                    bill.setId(result.getString(1));
+                } //putting them to the bill model
+                bill.setTeaSub(teaPacketC);
+                bill.setContainerSub(containerC);
+                bill.setFertilizerSub(fertilizerC);
+                bill.setOtherSub(otherC);
+                bill.setAdvanceSub(advance);
+
+                setDataFromBill(bill);
+
+                tblKg.setItems(kglist);
+
+
             }
 
         }
 
 
+    }
+//This function Will set the labels that needs to be set with values
+    private void setDataFromBill(MonthBill bill) {
+        lblTransport.setText(String.valueOf(bill.getKgAmount()*5));
+        lblTeaPacket.setText(String.valueOf(bill.getTeaSub()));
+        lblFertilizer.setText(String.valueOf(bill.getFertilizerSub()));
+        lblContainers.setText(String.valueOf(bill.getContainerSub()));
+        lblAdvance.setText(String.valueOf(bill.getAdvanceSub()));
+        lblBalance.setText(String.valueOf(bill.getBalance()));
+        lblWholeSub.setText(String.valueOf(bill.getWholeSub()));
+        lblWholeSum.setText(String.valueOf(bill.getWholeSum()));
+        lbltTeaSum.setText(String.valueOf(bill.getGrossTeaSum()));
+        lblOtherSum.setText(String.valueOf(bill.getOtherSum()));
     }
 
     //getting the customer name list to the combobox to show
