@@ -2,6 +2,7 @@ package controller;
 
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.JFXTreeTableView;
 import db.DBConnection;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,9 +12,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TreeTableColumn;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import model.MonthBill;
 
 import java.io.IOException;
 import java.net.URL;
@@ -26,14 +30,28 @@ import java.util.ResourceBundle;
 public class DataInsertController implements Initializable {
     public JFXTextField txtOther;
     public JFXTextField txtAdvance;
+    public Label lblTransport;
+    public Label lblTeaPacket;
+    public Label lblFertilizer;
+    public Label lblContainers;
+    public Label lblAdvance;
+    public Label lblBalance;
+    public Label lblWholeSub;
+    public Label lbltTeaSum;
+    public Label lblOtherSum;
+    public Label lblWholeSum;
+    public JFXTreeTableView tblKg;
+    public TreeTableColumn colDate;
+    public TreeTableColumn colKg;
     Connection conn = DBConnection.getConnection();
     public GridPane pane;
     public JFXTextField txtFieldContainCost;
     public JFXTextField txtFertilizer;
-    public JFXComboBox customerCombo;
+    public JFXComboBox<String> customerCombo;
     public JFXTextField txtTeaPacket;
     public JFXTextField txtFieldKg;
     public DatePicker datePicker;
+
 
 
     @Override
@@ -41,24 +59,47 @@ public class DataInsertController implements Initializable {
 
         try {
             customerCombo.setItems(getCustomerNameList());
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 //detect changes in the comboBox and the datePicker and then setting the info page if the changes are valid
         customerCombo.getSelectionModel().selectedItemProperty().addListener((observableValue, o, newVal) -> {
-            setInfoPage(newVal);
+            try {
+                setInfoPage(newVal);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         });
         datePicker.valueProperty().addListener((observableValue, localDate, newDate) -> {
-            setInfoPage(newDate);
+            try {
+                setInfoPage(newDate);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         });
 
 
     }
 
-    private void setInfoPage(Object newVal) {
-        System.out.println("setInfoPage");
-        System.out.println(newVal);
+    private void setInfoPage(Object newVal) throws SQLException {
+        String date= String.valueOf(datePicker.getValue());
+        String id = !customerCombo.getSelectionModel().isEmpty()?getCustId((String) (customerCombo.getValue())):null;
+        if(datePicker.getValue()!=null && id!=null){
+
+            String sql="SELECT * FROM records WHERE YEAR(date)="+datePicker.getValue().getYear()+" AND MONTH(date)="+datePicker.getValue().getMonthValue()+" AND id='"+id+"'";
+            Statement stmt=conn.createStatement();
+            System.out.println("\n\n\nthis is the getting records sql"+sql+"\n\n\n");
+            ResultSet result=stmt.executeQuery(sql);
+            MonthBill bill =new MonthBill();
+            if(result.isBeforeFirst()){
+                while(result.next()){
+
+                }
+            }
+
+        }
+
+
     }
 
     //getting the customer name list to the combobox to show
