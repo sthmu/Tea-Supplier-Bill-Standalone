@@ -1,8 +1,15 @@
 package model;
 
-public class MonthBill {
+import db.DBConnection;
 
-    public static double kgPrice=160;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class MonthBill {
+    private static Connection conn = DBConnection.getConnection();
+    public static double kgPrice = 160;
 
     public static double getKgPrice() {
         return kgPrice;
@@ -11,19 +18,14 @@ public class MonthBill {
     public static void setKgPrice(double kgPrice) {
         MonthBill.kgPrice = kgPrice;
     }
+
     private String id;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     private String year;
     private String month;
 
+
+    //SUMS
+    private int[] kgs = new int[31];
     private double carrySum;
     private double grossTeaSum;
     private double otherSum;
@@ -37,13 +39,18 @@ public class MonthBill {
     private double otherSub;
     private double advanceSub;
 
+    public String getId() {
+        return id;
+    }
 
-    //SUMS
-    private int[] kgs=new int[31];
-    public int getKgAmount(){
-        int tempSum=0;
-        for(int i=0;i<31;i++){
-             tempSum+= kgs[i];
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int getKgAmount() {
+        int tempSum = 0;
+        for (int i = 0; i < 31; i++) {
+            tempSum += kgs[i];
         }
         return tempSum;
     }
@@ -77,8 +84,8 @@ public class MonthBill {
     }
 
     public double getGrossTeaSum() {
-        for(int i=0;i<31;i++){
-            grossTeaSum += kgs[i]*kgPrice;
+        for (int i = 0; i < 31; i++) {
+            grossTeaSum += kgs[i] * kgPrice;
         }
         return grossTeaSum;
     }
@@ -95,9 +102,6 @@ public class MonthBill {
         this.otherSum = otherSum;
     }
 
-    public double getWholeSum() {
-        return WholeSum;
-    }
 
     public void setWholeSum(double wholeSum) {
         WholeSum = wholeSum;
@@ -151,16 +155,29 @@ public class MonthBill {
         this.advanceSub = advanceSub;
     }
 
+    public double getWholeSum() {
+
+        System.out.println(grossTeaSum + "sdadasd");
+        WholeSum = getCarrySum() + getGrossTeaSum() + getOtherSum();
+
+        return WholeSum;
+
+    }
 
     public double getWholeSub() {
-        double wholeSub=transportSub +teaSub +containerSub +fertilizerSub +otherSub +advanceSub;
+        double wholeSub = transportSub + teaSub + containerSub + fertilizerSub + otherSub + advanceSub;
 
         return wholeSub;
     }
 
-
     public double getBalance() {
-       return getWholeSum()-getWholeSub();
+        return getWholeSum() - getWholeSub();
     }
 
+
+    public static boolean printBill(MonthBill bill) throws SQLException {
+        Customer customer = new Customer(bill.getId());
+
+
+    }
 }

@@ -1,7 +1,14 @@
 package model;
 
-public class Customer {
+import db.DBConnection;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class Customer {
+    Connection conn=DBConnection.getConnection();
     private String id;
     private String name;
     private String address;
@@ -31,6 +38,18 @@ public class Customer {
         this.name = name;
         this.address = address;
         this.phone = phone;
+    }
+
+    public Customer(String id) throws SQLException {
+        String sql="SELECT * FROM customer where id='"+id+"'";
+        Statement stmt=conn.createStatement();
+        ResultSet result=stmt.executeQuery(sql);
+        if(result.next()) {
+         this.id = result.getString(1);
+            this.name = result.getString(2);
+            this.address = result.getString(3);
+            this.phone = result.getString(4);
+        }
     }
 
     public String getName() {

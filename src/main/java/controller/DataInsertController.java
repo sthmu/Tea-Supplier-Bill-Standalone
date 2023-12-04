@@ -2,18 +2,22 @@ package controller;
 
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableView;
+import com.mysql.cj.xdevapi.Column;
 import db.DBConnection;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.print.*;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import model.MonthBill;
 import model.tm.Kgtm;
@@ -24,7 +28,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 public class DataInsertController implements Initializable {
@@ -43,8 +46,9 @@ public class DataInsertController implements Initializable {
     public TableView<Kgtm> tblKg;
     public TableColumn colDate;
     public TableColumn colKg;
-
-
+    public Label lblOtherSub;
+    public AnchorPane billPane;
+    public ColumnConstraints pane1C;
     Connection conn = DBConnection.getConnection();
     public GridPane pane;
     public JFXTextField txtFieldContainCost;
@@ -55,11 +59,11 @@ public class DataInsertController implements Initializable {
     public DatePicker datePicker;
 
 
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        clearInfoPage();
         colDate.setCellValueFactory(new PropertyValueFactory<>("day"));
-        colDate.setCellValueFactory(new PropertyValueFactory<>("kg"));
+        colKg.setCellValueFactory(new PropertyValueFactory<>("kg"));
 
         try {
             customerCombo.setItems(getCustomerNameList());
@@ -86,30 +90,30 @@ public class DataInsertController implements Initializable {
     }
 
     private void setInfoPage(Object newVal) throws SQLException {
-        String date= String.valueOf(datePicker.getValue());
-        String id = !customerCombo.getSelectionModel().isEmpty()?getCustId((String) (customerCombo.getValue())):null;
-        if(datePicker.getValue()!=null && id!=null){
+        String date = String.valueOf(datePicker.getValue());
+        String id = !customerCombo.getSelectionModel().isEmpty() ? getCustId((String) (customerCombo.getValue())) : null;
+        if (datePicker.getValue() != null && id != null) {
 
-            String sql="SELECT * FROM records WHERE YEAR(date)="+datePicker.getValue().getYear()+" AND MONTH(date)="+datePicker.getValue().getMonthValue()+" AND id='"+id+"'";
-            Statement stmt=conn.createStatement();
-            System.out.println("\n\n\nthis is the getting records sql"+sql+"\n\n\n");
-            ResultSet result=stmt.executeQuery(sql);
-            MonthBill bill =new MonthBill();
-            if(result.isBeforeFirst()){
-                //create the correct data format for the table view
-                ObservableList<Kgtm> kglist=FXCollections.observableArrayList();
+            String sql = "SELECT * FROM records WHERE YEAR(date)=" + datePicker.getValue().getYear() + " AND MONTH(date)=" + datePicker.getValue().getMonthValue() + " AND id='" + id + "'";
+            Statement stmt = conn.createStatement();
+
+            ResultSet result = stmt.executeQuery(sql);
+            MonthBill bill = new MonthBill();
+            if (result.isBeforeFirst()) {
+
 
                 int kgs = 0;
-                double teaPacketC =0;
-                double containerC =0;
-                double fertilizerC =0;
-                double otherC =0;
-                double advance =0;
-                while(result.next()) {
+                double teaPacketC = 0;
+                double containerC = 0;
+                double fertilizerC = 0;
+                double otherC = 0;
+                double advance = 0;
+                while (result.next()) {
 
                     //making it clearer by using variables for each part
                     int day = Integer.parseInt((result.getString(2)).split("-")[2]);
-                    int kg=Integer.parseInt(result.getString(3));
+                    int kg = Integer.parseInt(result.getString(3));
+
                     kgs += kg;
                     teaPacketC += Double.parseDouble(result.getString(4));
                     containerC += Double.parseDouble(result.getString(5));
@@ -117,9 +121,8 @@ public class DataInsertController implements Initializable {
                     otherC += Double.parseDouble(result.getString(7));
                     advance += Double.parseDouble(result.getString(8));
 
-                    Kgtm kgtblrow = new Kgtm(day, kg);
-                    kglist.add(kgtblrow);
-                    bill.getKgs()[day-1]=kg;
+
+                    bill.getKgs()[day - 1] = kg;
                     bill.setId(result.getString(1));
                 } //putting them to the bill model
                 bill.setTeaSub(teaPacketC);
@@ -130,18 +133,46 @@ public class DataInsertController implements Initializable {
 
                 setDataFromBill(bill);
 
-                tblKg.setItems(kglist);
 
+                setTable(bill.getKgs());
 
+            } else {
+                clearInfoPage();
             }
 
         }
 
 
     }
-//This function Will set the labels that needs to be set with values
+
+    private void setTable(int[] kgs) {
+        //create the correct data format for the table view
+        ObservableList<Kgtm> kglist = FXCollections.observableArrayList();
+        for (int i = 1; i < 32; i++) {
+            Kgtm tempKgtm = new Kgtm(i, kgs[i - 1]);
+            kglist.add(tempKgtm);
+        }
+        tblKg.setItems(kglist);
+    }
+
+    private void clearInfoPage() {
+        lblTransport.setText("");
+        lblTeaPacket.setText("");
+        lblFertilizer.setText("");
+        lblContainers.setText("");
+        lblAdvance.setText("");
+        lblBalance.setText("");
+        lblWholeSub.setText("");
+        lblWholeSum.setText("");
+        lbltTeaSum.setText("");
+        lblOtherSum.setText("");
+        lblOtherSub.setText("");
+        tblKg.setItems(FXCollections.observableArrayList());
+    }
+
+    //This function Will set the labels that needs to be set with values
     private void setDataFromBill(MonthBill bill) {
-        lblTransport.setText(String.valueOf(bill.getKgAmount()*5));
+        lblTransport.setText(String.valueOf(bill.getKgAmount() * 5));
         lblTeaPacket.setText(String.valueOf(bill.getTeaSub()));
         lblFertilizer.setText(String.valueOf(bill.getFertilizerSub()));
         lblContainers.setText(String.valueOf(bill.getContainerSub()));
@@ -151,6 +182,7 @@ public class DataInsertController implements Initializable {
         lblWholeSum.setText(String.valueOf(bill.getWholeSum()));
         lbltTeaSum.setText(String.valueOf(bill.getGrossTeaSum()));
         lblOtherSum.setText(String.valueOf(bill.getOtherSum()));
+        lblOtherSub.setText(String.valueOf(bill.getOtherSub()));
     }
 
     //getting the customer name list to the combobox to show
@@ -160,7 +192,6 @@ public class DataInsertController implements Initializable {
         ResultSet result = stmt.executeQuery(sql);
         ObservableList<String> custNameList = FXCollections.observableArrayList();
         while (result.next()) {
-            System.out.println(result.getString(2));
             custNameList.add(result.getString(2));
         }
         return custNameList;
@@ -178,14 +209,16 @@ public class DataInsertController implements Initializable {
         }
     }
 
-    public void addSupplier(MouseEvent mouseEvent) {
+    public void addSupplier(MouseEvent mouseEvent) throws IOException {
+        Stage stage = (Stage) tblKg.getScene().getWindow();
+        stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/view/Customer.fxml"))));
+
     }
 
 
 //after validation update if the recExists if not insert a new rec
 
     public void updateOnButton(ActionEvent actionEvent) throws SQLException {
-
         String date = String.valueOf(datePicker.getValue());
         String id = getCustId((String) (customerCombo.getValue()));
         if (checkIfRecExists(date, id)) {
@@ -193,6 +226,8 @@ public class DataInsertController implements Initializable {
         } else {
             insertRec(id, date);
         }
+
+        setInfoPage(datePicker.getValue());
 
     }
 
@@ -225,7 +260,7 @@ public class DataInsertController implements Initializable {
         String sql = "UPDATE records SET kg=" + kg + ",teaPackets=" + teaPacketC + ",booksAndContainers=" + containerC + ",fertilizer=" + fertilizerC + ",advance=" + advance + ",other=" + otherC + "  Where id='" + id + "' AND date='" + date + "'";
         System.out.println("\n\n" + sql + "this is the sql line\n\n");
         Statement stmt = conn.createStatement();
-        System.out.println("this is the update query"+sql);
+        System.out.println("this is the update query" + sql);
         int result = stmt.executeUpdate(sql);
         if (result > 0) {
             new Alert(Alert.AlertType.INFORMATION, "record Updated successfully");
@@ -256,4 +291,50 @@ public class DataInsertController implements Initializable {
     }
 
 
+    public void printBill(ActionEvent actionEvent) throws SQLException {
+        String date = String.valueOf(datePicker.getValue());
+        String id = !customerCombo.getSelectionModel().isEmpty() ? getCustId((String) (customerCombo.getValue())) : null;
+        if (datePicker.getValue() != null && id != null) {
+
+            String sql = "SELECT * FROM records WHERE YEAR(date)=" + datePicker.getValue().getYear() + " AND MONTH(date)=" + datePicker.getValue().getMonthValue() + " AND id='" + id + "'";
+            Statement stmt = conn.createStatement();
+
+            ResultSet result = stmt.executeQuery(sql);
+            MonthBill bill = new MonthBill();
+            if (result.isBeforeFirst()) {
+
+
+                int kgs = 0;
+                double teaPacketC = 0;
+                double containerC = 0;
+                double fertilizerC = 0;
+                double otherC = 0;
+                double advance = 0;
+                while (result.next()) {
+
+                    //making it clearer by using variables for each part
+                    int day = Integer.parseInt((result.getString(2)).split("-")[2]);
+                    int kg = Integer.parseInt(result.getString(3));
+
+                    kgs += kg;
+                    teaPacketC += Double.parseDouble(result.getString(4));
+                    containerC += Double.parseDouble(result.getString(5));
+                    fertilizerC += Double.parseDouble(result.getString(6));
+                    otherC += Double.parseDouble(result.getString(7));
+                    advance += Double.parseDouble(result.getString(8));
+
+
+                    bill.getKgs()[day - 1] = kg;
+                    bill.setId(result.getString(1));
+                } //putting them to the bill model
+                bill.setTeaSub(teaPacketC);
+                bill.setContainerSub(containerC);
+                bill.setFertilizerSub(fertilizerC);
+                bill.setOtherSub(otherC);
+                bill.setAdvanceSub(advance);
+
+            }
+            MonthBill.printBill(bill);
+        }
+    }
 }

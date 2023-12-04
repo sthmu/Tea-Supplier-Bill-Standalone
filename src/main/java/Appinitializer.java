@@ -13,10 +13,7 @@ public class Appinitializer extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        System.out.println("Start function");
         primaryStage.setScene(new Scene(FXMLLoader.load(getClass().getResource("view/insertData.fxml"))));
-
-
         primaryStage.show();
     }
 

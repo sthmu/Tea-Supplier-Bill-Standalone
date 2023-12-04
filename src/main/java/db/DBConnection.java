@@ -10,7 +10,8 @@ public class DBConnection {
         try {
             System.out.println("dbconnection try start");
             Class.forName("com.mysql.cj.jdbc.Driver");
-            conn= DriverManager.getConnection("jdbc:mysql://localhost:3306/teaexchange","root","root");
+            conn =DriverManager.getConnection("jdbc:mysql://localhost:3306/teaExchange","root","root");
+           // conn= DriverManager.getConnection("jdbc:sqlserver://micros.database.windows.net:1433;database=teaexchange;user=boya;password=lumala123!;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;");
         } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException(e);
         }
