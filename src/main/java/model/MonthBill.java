@@ -1,15 +1,32 @@
 package model;
 
 import db.DBConnection;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import javax.swing.plaf.nimbus.State;
+import javax.xml.transform.Result;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 
 public class MonthBill {
     private static Connection conn = DBConnection.getConnection();
     public static double kgPrice = 160;
+
+    public MonthBill(String id, int year, int month) throws SQLException {
+        this.id = id;
+        this.year = year;
+        this.month = month;
+        setFertilizerSub();
+    }
 
     public static double getKgPrice() {
         return kgPrice;
@@ -20,8 +37,8 @@ public class MonthBill {
     }
 
     private String id;
-    private String year;
-    private String month;
+    private int year;
+    private int month;
 
 
     //SUMS
@@ -55,19 +72,19 @@ public class MonthBill {
         return tempSum;
     }
 
-    public String getYear() {
+    public int getYear() {
         return year;
     }
 
-    public void setYear(String year) {
+    public void setYear(int year) {
         this.year = year;
     }
 
-    public String getMonth() {
+    public int getMonth() {
         return month;
     }
 
-    public void setMonth(String month) {
+    public void setMonth(int month) {
         this.month = month;
     }
 
@@ -135,8 +152,30 @@ public class MonthBill {
         return fertilizerSub;
     }
 
-    public void setFertilizerSub(double fertilizerSub) {
-        this.fertilizerSub = fertilizerSub;
+    public void setFertilizerSub() throws SQLException {
+        //the customer wont pay the fertilizer debt at the same month he takes the debt, therefore we have to take the sum of fertilizer debt from the last months
+        //if the customer took the debt in the last month then he would pay one part this month and the second part next month.
+    for(int i=0;i<2;i++) {
+        String dateString = ""+year+"-"+month;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+
+        // Parse the string to a YearMonth object
+        YearMonth originalYearMonth = YearMonth.parse(dateString, formatter);
+
+        // Get the YearMonth before the original date
+        YearMonth yearMonthBefore = originalYearMonth.minusMonths(i);
+
+
+
+        String sql = "SELECT fertilizer FROM records  WHERE YEAR(date)=" + yearMonthBefore.getYear() + " AND MONTH(date)=" +yearMonthBefore.getMonthValue() + " AND id='" + id + "'";
+        Statement stmt = conn.createStatement();
+        ResultSet result = stmt.executeQuery(sql);
+        System.out.println(sql);
+        if (result.next()) {
+
+             this.fertilizerSub += fertilizerSub/2;
+        }
+    }
     }
 
     public double getOtherSub() {
@@ -175,8 +214,34 @@ public class MonthBill {
     }
 
 
-    public static boolean printBill(MonthBill bill) throws SQLException {
+    public static void printBill(MonthBill bill) throws SQLException, IOException, InvalidFormatException {
         Customer customer = new Customer(bill.getId());
+        FileInputStream fis = new FileInputStream(new File("src/main/resources/invoice/invoice.xlsx"));
+        XSSFWorkbook workbook = new XSSFWorkbook(fis);
+        XSSFSheet sheet = workbook.getSheetAt(0);
+
+
+        XSSFCell phoneCell = sheet.getRow(0).getCell(1);
+        XSSFCell idCell = sheet.getRow(1).getCell(1);
+        XSSFCell nameCell = sheet.getRow(2).getCell(1);
+        XSSFCell kgCell = sheet.getRow(4).getCell(1);
+        XSSFCell monthCell = sheet.getRow(2).getCell(8);
+        XSSFCell carrySumCell = sheet.getRow(6).getCell(2);
+        XSSFCell grossTeaSumCell = sheet.getRow(7).getCell(2);
+        XSSFCell otherSumCell = sheet.getRow(8).getCell(2);
+
+        // phoneCell.setCellType(CellType.STRING);
+        phoneCell.setCellValue(customer.getPhone());
+
+
+        FileOutputStream fileOut = new FileOutputStream("src/main/resources/invoice/JavaBooks.xlsx");
+        workbook.write(fileOut);
+
+        System.out.println("Id column in Excel is updated successfully");
+        fileOut.close();
+
+        // Closing the workbook
+        workbook.close();
 
 
     }

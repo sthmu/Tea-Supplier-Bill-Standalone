@@ -21,6 +21,7 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import model.MonthBill;
 import model.tm.Kgtm;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import java.io.IOException;
 import java.net.URL;
@@ -98,7 +99,7 @@ public class DataInsertController implements Initializable {
             Statement stmt = conn.createStatement();
 
             ResultSet result = stmt.executeQuery(sql);
-            MonthBill bill = new MonthBill();
+            MonthBill bill = new MonthBill(id,datePicker.getValue().getYear(),datePicker.getValue().getMonthValue());
             if (result.isBeforeFirst()) {
 
 
@@ -127,7 +128,7 @@ public class DataInsertController implements Initializable {
                 } //putting them to the bill model
                 bill.setTeaSub(teaPacketC);
                 bill.setContainerSub(containerC);
-                bill.setFertilizerSub(fertilizerC);
+                //bill.setFertilizerSub(fertilizerC);//this function is not needed as it was developed by the business logic
                 bill.setOtherSub(otherC);
                 bill.setAdvanceSub(advance);
 
@@ -291,7 +292,7 @@ public class DataInsertController implements Initializable {
     }
 
 
-    public void printBill(ActionEvent actionEvent) throws SQLException {
+    public void printBill(ActionEvent actionEvent) throws SQLException, IOException, InvalidFormatException {
         String date = String.valueOf(datePicker.getValue());
         String id = !customerCombo.getSelectionModel().isEmpty() ? getCustId((String) (customerCombo.getValue())) : null;
         if (datePicker.getValue() != null && id != null) {
@@ -300,7 +301,7 @@ public class DataInsertController implements Initializable {
             Statement stmt = conn.createStatement();
 
             ResultSet result = stmt.executeQuery(sql);
-            MonthBill bill = new MonthBill();
+            MonthBill bill = new MonthBill(id,datePicker.getValue().getYear(),datePicker.getValue().getMonthValue());
             if (result.isBeforeFirst()) {
 
 
@@ -329,7 +330,7 @@ public class DataInsertController implements Initializable {
                 } //putting them to the bill model
                 bill.setTeaSub(teaPacketC);
                 bill.setContainerSub(containerC);
-                bill.setFertilizerSub(fertilizerC);
+                //bill.setFertilizerSub(fertilizerC);
                 bill.setOtherSub(otherC);
                 bill.setAdvanceSub(advance);
 
