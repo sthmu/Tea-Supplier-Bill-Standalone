@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormatSymbols;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 
@@ -155,27 +156,26 @@ public class MonthBill {
     public void setFertilizerSub() throws SQLException {
         //the customer wont pay the fertilizer debt at the same month he takes the debt, therefore we have to take the sum of fertilizer debt from the last months
         //if the customer took the debt in the last month then he would pay one part this month and the second part next month.
-    for(int i=0;i<2;i++) {
-        String dateString = ""+year+"-"+month;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+        for (int i = 1; i < 3; i++) {
+            String dateString = "" + year + "-" + month;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
 
-        // Parse the string to a YearMonth object
-        YearMonth originalYearMonth = YearMonth.parse(dateString, formatter);
+            // Parse the string to a YearMonth object
+            YearMonth originalYearMonth = YearMonth.parse(dateString, formatter);
 
-        // Get the YearMonth before the original date
-        YearMonth yearMonthBefore = originalYearMonth.minusMonths(i);
+            // Get the YearMonth before the original date
+            YearMonth yearMonthBefore = originalYearMonth.minusMonths(i);
 
 
+            String sql = "SELECT fertilizer FROM records  WHERE YEAR(date)=" + yearMonthBefore.getYear() + " AND MONTH(date)=" + yearMonthBefore.getMonthValue() + " AND id='" + id + "'";
+            Statement stmt = conn.createStatement();
+            ResultSet result = stmt.executeQuery(sql);
+            System.out.println(sql);
+            if (result.next()) {
 
-        String sql = "SELECT fertilizer FROM records  WHERE YEAR(date)=" + yearMonthBefore.getYear() + " AND MONTH(date)=" +yearMonthBefore.getMonthValue() + " AND id='" + id + "'";
-        Statement stmt = conn.createStatement();
-        ResultSet result = stmt.executeQuery(sql);
-        System.out.println(sql);
-        if (result.next()) {
-
-             this.fertilizerSub += fertilizerSub/2;
+                this.fertilizerSub += result.getDouble("fertilizer") / 2;
+            }
         }
-    }
     }
 
     public double getOtherSub() {
@@ -229,12 +229,40 @@ public class MonthBill {
         XSSFCell carrySumCell = sheet.getRow(6).getCell(2);
         XSSFCell grossTeaSumCell = sheet.getRow(7).getCell(2);
         XSSFCell otherSumCell = sheet.getRow(8).getCell(2);
+        XSSFCell wholeSumCell = sheet.getRow(9).getCell(2);
+        XSSFCell transportSubCell = sheet.getRow(11).getCell(2);
+        XSSFCell teaSubCell = sheet.getRow(12).getCell(2);
+        XSSFCell containerSubCell = sheet.getRow(13).getCell(2);
+        XSSFCell advanceSubCell = sheet.getRow(14).getCell(2);
+        XSSFCell fertilizerSubCell = sheet.getRow(15).getCell(2);
+        XSSFCell otherSubCell = sheet.getRow(16).getCell(2);
+        XSSFCell wholeSubCell = sheet.getRow(17).getCell(2);
+        XSSFCell balanceCell = sheet.getRow(18).getCell(2);
+
+        XSSFCell billIndexCell = sheet.getRow(4).getCell(5);
 
         // phoneCell.setCellType(CellType.STRING);
         phoneCell.setCellValue(customer.getPhone());
+        idCell.setCellValue(customer.getId());
+        nameCell.setCellValue(customer.getName());
+        kgCell.setCellValue(bill.getKgAmount());
+        monthCell.setCellValue(new DateFormatSymbols().getMonths()[bill.getMonth() - 1]);
+        carrySumCell.setCellValue(bill.getCarrySum());
+        grossTeaSumCell.setCellValue(bill.getGrossTeaSum());
+        otherSumCell.setCellValue(bill.getOtherSum());
+        wholeSumCell.setCellValue(bill.getWholeSum());
+        transportSubCell.setCellValue(bill.getTransportSub());
+        teaSubCell.setCellValue(bill.getTeaSub());
+        containerSubCell.setCellValue(bill.getContainerSub());
+        advanceSubCell.setCellValue(bill.getAdvanceSub());
+        fertilizerSubCell.setCellValue(bill.getFertilizerSub());
+        otherSubCell.setCellValue(bill.getOtherSub());
+        wholeSubCell.setCellValue(bill.getWholeSub());
+        balanceCell.setCellValue(bill.getBalance());
+        billIndexCell.setCellValue("බිල් අංකය" + bill.getYear() + bill.getMonth() + bill.getId());
 
 
-        FileOutputStream fileOut = new FileOutputStream("src/main/resources/invoice/JavaBooks.xlsx");
+        FileOutputStream fileOut = new FileOutputStream("src/main/resources/invoice/"+bill.getYear() + bill.getMonth() + bill.getId()+".xlsx");
         workbook.write(fileOut);
 
         System.out.println("Id column in Excel is updated successfully");
