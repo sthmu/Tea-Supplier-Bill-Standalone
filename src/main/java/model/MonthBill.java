@@ -361,8 +361,10 @@ public class MonthBill {
 
         // Closing the workbook
         workbook.close();
+    }
 
-
+    public boolean isValid(){
+        return !(getWholeSum()==0 && getWholeSub()==0);
     }
 }
 

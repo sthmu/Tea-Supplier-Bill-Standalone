@@ -17,6 +17,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import model.MonthBill;
 import model.tm.MonthBillTm;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 
 import java.io.IOException;
@@ -48,7 +49,7 @@ public class BillPrintController {
     @FXML
     private ComboBox<String> monthComboBox;
 
-    private List<MonthBill> billList=new ArrayList<>();
+
 
     @FXML
     public void initialize() {
@@ -101,12 +102,13 @@ public class BillPrintController {
 
             while(customerResultSet.next()){
                 MonthBill bill=new MonthBill(customerResultSet.getString(1),yearComboBox.getValue(),Month.valueOf(monthComboBox.getValue().toUpperCase()).getValue());
-                billList.add(bill);
+
                 MonthBillTm tempMonthBillTm=new  MonthBillTm(bill);
                 JFXRadioButton tempSelectBtn=new JFXRadioButton();
                 tempSelectBtn.setOnAction(actionEvent -> {
                     System.out.println("selectedBillBTN pressed for :  "+bill.getName());
                 });
+                tempSelectBtn.setSelected(bill.isValid());
                 tempMonthBillTm.setSelectBtn(tempSelectBtn);
                 billTmList.add(tempMonthBillTm);
             }
@@ -118,7 +120,13 @@ public class BillPrintController {
 
     }
 
-    public void printSelectedOnPress(ActionEvent actionEvent) {
+    public void printSelectedOnPress(ActionEvent actionEvent) throws SQLException, IOException, InvalidFormatException {
+        ObservableList<MonthBillTm> tableItems=billTable.getItems();
+        for(MonthBillTm tableItem : tableItems){
+            if(tableItem.getSelectBtn().isSelected()) {
+                MonthBill.printBill(tableItem.getBill());
+            }
+        }
     }
 
     public void refreshOnPress(ActionEvent actionEvent) {

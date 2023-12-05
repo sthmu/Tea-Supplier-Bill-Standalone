@@ -43,6 +43,7 @@ public class MonthBillTm {
         phone=bill.getPhone();
         year=bill.getYear();
         month=bill.getMonth();
+        Balance=bill.getBalance();
 
     }
 

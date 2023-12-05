@@ -68,7 +68,7 @@ public class dashboardController {
     public void goToPrintBills(ActionEvent actionEvent) {
         Stage stage=(Stage) pane.getScene().getWindow();
         try {
-            stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("view/BillPrint.fxml"))));
+            stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/view/BillPrint.fxml"))));
             stage.show();
         } catch (IOException e) {
             System.out.println("dashboardController goto items Error");
