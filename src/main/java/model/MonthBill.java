@@ -259,10 +259,25 @@ public class MonthBill {
         otherSubCell.setCellValue(bill.getOtherSub());
         wholeSubCell.setCellValue(bill.getWholeSub());
         balanceCell.setCellValue(bill.getBalance());
-        billIndexCell.setCellValue("බිල් අංකය" + bill.getYear() + bill.getMonth() + bill.getId());
+        billIndexCell.setCellValue("බිල් අංකය : " + bill.getYear() + bill.getMonth() + bill.getId());
+
+        int i = 0;
+        int row = 7;
+        int col = 4;
+        XSSFCell tableKgCell;
+        while (i < 31) {
+            row = 7;
+            for (; (row <= 15 && i < 31); i++, row++) {
+                tableKgCell = sheet.getRow(row).getCell(col);
+                tableKgCell.setCellValue(bill.getKgs()[i]);
+            }
+            col += 2;
+
+            System.out.println("this is the table date now inserting"+i);
+        }
 
 
-        FileOutputStream fileOut = new FileOutputStream("src/main/resources/invoice/"+bill.getYear() + bill.getMonth() + bill.getId()+".xlsx");
+        FileOutputStream fileOut = new FileOutputStream("src/main/resources/invoice/" + bill.getYear() + bill.getMonth() + bill.getId() + ".xlsx");
         workbook.write(fileOut);
 
         System.out.println("Id column in Excel is updated successfully");
