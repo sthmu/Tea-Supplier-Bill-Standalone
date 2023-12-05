@@ -6,13 +6,31 @@ import model.MonthBill;
 import java.time.Month;
 
 public class MonthBillTm {
-    JFXRadioButton selectBtn;
+    private JFXRadioButton selectBtn;
 
     private MonthBill bill;
+    private int year;
+    private int month;
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
 
     private String id;
     private String name;
-    private String Address;
+    private String address;
     private String phone;
     private double Balance;
 
@@ -21,8 +39,10 @@ public class MonthBillTm {
 
         id= bill.getId();
         name=bill.getName();
-        Address=bill.getAddress();
+        address=bill.getAddress();
         phone=bill.getPhone();
+        year=bill.getYear();
+        month=bill.getMonth();
 
     }
 
@@ -35,7 +55,7 @@ public class MonthBillTm {
     }
 
     public void setAddress(String address) {
-        Address = address;
+        address = address;
     }
 
     public void setPhone(String phone) {
@@ -55,7 +75,7 @@ public class MonthBillTm {
     }
 
     public String getAddress() {
-        return Address;
+        return address;
     }
 
     public String getPhone() {

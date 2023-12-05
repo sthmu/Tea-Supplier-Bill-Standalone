@@ -21,11 +21,15 @@ import java.time.format.DateTimeFormatter;
 public class MonthBill {
     private static Connection conn = DBConnection.getConnection();
     public static double kgPrice = 160;
+    private Customer customer;
 
     public MonthBill(String id, int year, int month) throws SQLException {
-        Customer customer=new Customer(id);
+        customer=new Customer(id);
 
         this.id = customer.getId();
+        this.name=customer.getName();
+        this.address=customer.getAddress();
+        this.phone= customer.getPhone();
 
         this.year = year;
         this.month = month;
@@ -224,17 +228,19 @@ public class MonthBill {
         //the customer wont pay the fertilizer debt at the same month he takes the debt, therefore we have to take the sum of fertilizer debt from the last months
         //if the customer took the debt in the last month then he would pay one part this month and the second part next month.
         for (int i = 1; i < 3; i++) {
-            String dateString = "" + year + "-" + month;
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
 
-            // Parse the string to a YearMonth object
-            YearMonth originalYearMonth = YearMonth.parse(dateString, formatter);
+            int tempMonth=month-i;
+            int tempYear=year;
 
-            // Get the YearMonth before the original date
-            YearMonth yearMonthBefore = originalYearMonth.minusMonths(i);
+            if(tempMonth==0){
+                tempMonth=12;
+                tempYear--;
+            }else if(tempMonth<0){
+                tempMonth=11;
+                tempYear--;
+            }
 
-
-            String sql = "SELECT fertilizer FROM records  WHERE YEAR(date)=" + yearMonthBefore.getYear() + " AND MONTH(date)=" + yearMonthBefore.getMonthValue() + " AND id='" + id + "'";
+            String sql = "SELECT fertilizer FROM records  WHERE YEAR(date)=" + tempYear + " AND MONTH(date)=" + tempMonth + " AND id='" + id + "'";
             Statement stmt = conn.createStatement();
             ResultSet result = stmt.executeQuery(sql);
             System.out.println(sql);
