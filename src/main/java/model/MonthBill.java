@@ -23,9 +23,46 @@ public class MonthBill {
     public static double kgPrice = 160;
 
     public MonthBill(String id, int year, int month) throws SQLException {
-        this.id = id;
+        Customer customer=new Customer(id);
+
+        this.id = customer.getId();
+
         this.year = year;
         this.month = month;
+        String sql = "SELECT * FROM records WHERE YEAR(date)=" +year+ " AND MONTH(date)=" + month + " AND id='" + id + "'";
+        Statement stmt = conn.createStatement();
+
+        ResultSet result = stmt.executeQuery(sql);
+        if (result.isBeforeFirst()) {
+            int kgs = 0;
+            double teaPacketC = 0;
+            double containerC = 0;
+            double fertilizerC = 0;
+            double otherC = 0;
+            double advance = 0;
+            while (result.next()) {
+
+                //making it clearer by using variables for each part
+                int day = Integer.parseInt((result.getString(2)).split("-")[2]);
+                int kg = Integer.parseInt(result.getString(3));
+
+                kgs += kg;
+                teaPacketC += Double.parseDouble(result.getString(4));
+                containerC += Double.parseDouble(result.getString(5));
+                fertilizerC += Double.parseDouble(result.getString(6));
+                otherC += Double.parseDouble(result.getString(7));
+                advance += Double.parseDouble(result.getString(8));
+
+
+                this.getKgs()[day - 1] = kg;
+                this.setId(result.getString(1));
+            } //putting them to the bill model
+            this.setTeaSub(teaPacketC);
+            this.setContainerSub(containerC);
+            //bill.setFertilizerSub(fertilizerC);//this function is not needed as it was developed by the business logic
+            this.setOtherSub(otherC);
+            this.setAdvanceSub(advance);
+        }
         setFertilizerSub();
     }
 
@@ -40,7 +77,37 @@ public class MonthBill {
     private String id;
     private int year;
     private int month;
+    private String name;
+    private String address;
+    private String phone;
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setFertilizerSub(double fertilizerSub) {
+        this.fertilizerSub = fertilizerSub;
+    }
 
     //SUMS
     private int[] kgs = new int[31];
@@ -261,6 +328,8 @@ public class MonthBill {
         balanceCell.setCellValue(bill.getBalance());
         billIndexCell.setCellValue("බිල් අංකය : " + bill.getYear() + bill.getMonth() + bill.getId());
 
+
+        //DEALING WITH THE TABLE
         int i = 0;
         int row = 7;
         int col = 4;
@@ -275,6 +344,7 @@ public class MonthBill {
 
             System.out.println("this is the table date now inserting"+i);
         }
+        //DONE DEALING WITH THE KG TABLE
 
 
         FileOutputStream fileOut = new FileOutputStream("src/main/resources/invoice/" + bill.getYear() + bill.getMonth() + bill.getId() + ".xlsx");
@@ -289,3 +359,4 @@ public class MonthBill {
 
     }
 }
+

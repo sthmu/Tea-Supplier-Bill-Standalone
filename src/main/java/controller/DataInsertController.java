@@ -94,53 +94,12 @@ public class DataInsertController implements Initializable {
         String date = String.valueOf(datePicker.getValue());
         String id = !customerCombo.getSelectionModel().isEmpty() ? getCustId((String) (customerCombo.getValue())) : null;
         if (datePicker.getValue() != null && id != null) {
+            MonthBill bill = new MonthBill(id, datePicker.getValue().getYear(), datePicker.getValue().getMonthValue());
+            setDataFromBill(bill);
+            setTable(bill.getKgs());
 
-            String sql = "SELECT * FROM records WHERE YEAR(date)=" + datePicker.getValue().getYear() + " AND MONTH(date)=" + datePicker.getValue().getMonthValue() + " AND id='" + id + "'";
-            Statement stmt = conn.createStatement();
-
-            ResultSet result = stmt.executeQuery(sql);
-            MonthBill bill = new MonthBill(id,datePicker.getValue().getYear(),datePicker.getValue().getMonthValue());
-            if (result.isBeforeFirst()) {
-
-
-                int kgs = 0;
-                double teaPacketC = 0;
-                double containerC = 0;
-                double fertilizerC = 0;
-                double otherC = 0;
-                double advance = 0;
-                while (result.next()) {
-
-                    //making it clearer by using variables for each part
-                    int day = Integer.parseInt((result.getString(2)).split("-")[2]);
-                    int kg = Integer.parseInt(result.getString(3));
-
-                    kgs += kg;
-                    teaPacketC += Double.parseDouble(result.getString(4));
-                    containerC += Double.parseDouble(result.getString(5));
-                    fertilizerC += Double.parseDouble(result.getString(6));
-                    otherC += Double.parseDouble(result.getString(7));
-                    advance += Double.parseDouble(result.getString(8));
-
-
-                    bill.getKgs()[day - 1] = kg;
-                    bill.setId(result.getString(1));
-                } //putting them to the bill model
-                bill.setTeaSub(teaPacketC);
-                bill.setContainerSub(containerC);
-                //bill.setFertilizerSub(fertilizerC);//this function is not needed as it was developed by the business logic
-                bill.setOtherSub(otherC);
-                bill.setAdvanceSub(advance);
-
-                setDataFromBill(bill);
-
-
-                setTable(bill.getKgs());
-
-            } else {
-                clearInfoPage();
-            }
-
+        } else {
+            clearInfoPage();
         }
 
 
@@ -297,44 +256,9 @@ public class DataInsertController implements Initializable {
         String id = !customerCombo.getSelectionModel().isEmpty() ? getCustId((String) (customerCombo.getValue())) : null;
         if (datePicker.getValue() != null && id != null) {
 
-            String sql = "SELECT * FROM records WHERE YEAR(date)=" + datePicker.getValue().getYear() + " AND MONTH(date)=" + datePicker.getValue().getMonthValue() + " AND id='" + id + "'";
-            Statement stmt = conn.createStatement();
-
-            ResultSet result = stmt.executeQuery(sql);
-            MonthBill bill = new MonthBill(id,datePicker.getValue().getYear(),datePicker.getValue().getMonthValue());
-            if (result.isBeforeFirst()) {
-
-
-                int kgs = 0;
-                double teaPacketC = 0;
-                double containerC = 0;
-                double fertilizerC = 0;
-                double otherC = 0;
-                double advance = 0;
-                while (result.next()) {
-
-                    //making it clearer by using variables for each part
-                    int day = Integer.parseInt((result.getString(2)).split("-")[2]);
-                    int kg = Integer.parseInt(result.getString(3));
-
-                    kgs += kg;
-                    teaPacketC += Double.parseDouble(result.getString(4));
-                    containerC += Double.parseDouble(result.getString(5));
-                    fertilizerC += Double.parseDouble(result.getString(6));
-                    otherC += Double.parseDouble(result.getString(7));
-                    advance += Double.parseDouble(result.getString(8));
-
-
-                    bill.getKgs()[day - 1] = kg;
-                    bill.setId(result.getString(1));
-                } //putting them to the bill model
-                bill.setTeaSub(teaPacketC);
-                bill.setContainerSub(containerC);
-                //bill.setFertilizerSub(fertilizerC);
-                bill.setOtherSub(otherC);
-                bill.setAdvanceSub(advance);
-
-            }
+            MonthBill bill = new MonthBill(id, datePicker.getValue().getYear(), datePicker.getValue().getMonthValue());
+            setDataFromBill(bill);
+            setTable(bill.getKgs());
             MonthBill.printBill(bill);
         }
     }

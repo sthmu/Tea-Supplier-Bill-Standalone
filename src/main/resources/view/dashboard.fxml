@@ -20,7 +20,7 @@
                   <Font size="28.0" />
                </font>
             </Label>
-            <Label prefHeight="41.0" prefWidth="277.0" text="Super Market" textFill="WHITE">
+            <Label prefHeight="41.0" prefWidth="277.0" text="Tea Exchange" textFill="WHITE">
                <font>
                   <Font name="Ubuntu Regular" size="30.0" />
                </font>
@@ -36,12 +36,12 @@
             <Font size="22.0" />
          </font>
       </JFXButton>
-      <JFXButton layoutX="42.0" layoutY="259.0" onAction="#goToItems" prefHeight="48.0" prefWidth="167.0" style="-fx-background-color: white;" text="Records">
+      <JFXButton layoutX="42.0" layoutY="259.0" onAction="#goToRecords" prefHeight="48.0" prefWidth="167.0" style="-fx-background-color: white;" text="Records">
          <font>
             <Font size="22.0" />
          </font>
       </JFXButton>
-      <JFXButton layoutX="42.0" layoutY="412.0" onAction="#goToItems" prefHeight="48.0" prefWidth="167.0" style="-fx-background-color: white;" text="Print Bills">
+      <JFXButton layoutX="42.0" layoutY="412.0" onAction="#goToPrintBills" prefHeight="48.0" prefWidth="167.0" style="-fx-background-color: white;" text="Print Bills">
          <font>
             <Font size="22.0" />
          </font>

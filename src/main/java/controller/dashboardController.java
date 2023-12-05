@@ -49,26 +49,26 @@ public class dashboardController {
         }
     }
 
-    public void gotoOrders(ActionEvent actionEvent) {
-
-    }
-
-    public void goToItems(ActionEvent actionEvent) {
-        Stage stage=(Stage) pane.getScene().getWindow();
-        try {
-            stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("../view/item.fxml"))));
-            stage.show();
-        } catch (IOException e) {
-            System.out.println("dashboardController goto items Error");
-            throw new RuntimeException(e);
-        }
-
-    }
 
     public void goToCheck(ActionEvent actionEvent) {
         Stage stage=(Stage) pane.getScene().getWindow();
         try {
             stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("../view/insertData.fxml"))));
+            stage.show();
+        } catch (IOException e) {
+            System.out.println("dashboardController goto items Error");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void goToRecords(ActionEvent actionEvent) {
+        System.out.println("goto Records triggered");
+    }
+
+    public void goToPrintBills(ActionEvent actionEvent) {
+        Stage stage=(Stage) pane.getScene().getWindow();
+        try {
+            stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("../view/billPrintForm.fxml"))));
             stage.show();
         } catch (IOException e) {
             System.out.println("dashboardController goto items Error");
