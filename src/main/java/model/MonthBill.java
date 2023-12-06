@@ -289,11 +289,44 @@ public class MonthBill {
 
     public static void printBill(MonthBill bill) throws SQLException, IOException, InvalidFormatException {
         Customer customer = new Customer(bill.getId());
+
+        XSSFWorkbook formatWorkbook=new XSSFWorkbook(new FileInputStream(new File("src/main/resources/invoice/invoice.xlsx")));
+        File file = new File("src/main/resources/invoice/"+ bill.getYear() + bill.getMonth()+".xlsx");
+        // Retrieve the workbook for the main report
+
+        XSSFWorkbook workbook;
+        // Check file existence
+        if (file.exists() == false) {
+            // Create new file if it does not exist
+            workbook = new XSSFWorkbook(new FileInputStream(new File("src/main/resources/invoice/invoice.xlsx")));
+        } else {
+            try (
+                    // Make current input to exist file
+                    InputStream is = new FileInputStream(file)) {
+                workbook = new XSSFWorkbook(is);
+            }
+        }
+
+        //FileInputStream fis = new FileInputStream(new File("src/main/resources/invoice/invoice.xlsx"));
+        //workbook = new XSSFWorkbook(fis);
+
+        XSSFSheet sheet;
+
+        //IF the workbook doesnt have a sheet named by id then take the sheet format from invoice
+        if(workbook.getSheetIndex(bill.getId())==-1){
+            sheet= workbook.cloneSheet(0);
+            workbook.setSheetName(workbook.getSheetIndex(sheet),""+bill.getId());
+        }
+
+
+        /*
+        Customer customer = new Customer(bill.getId());
         FileInputStream fis = new FileInputStream(new File("src/main/resources/invoice/invoice.xlsx"));
         XSSFWorkbook workbook = new XSSFWorkbook(fis);
         XSSFSheet sheet = workbook.getSheetAt(0);
-
-
+*/      sheet=workbook.getSheet(bill.id);
+        System.out.println(workbook);
+        System.out.println(sheet);
         XSSFCell phoneCell = sheet.getRow(0).getCell(1);
         XSSFCell idCell = sheet.getRow(1).getCell(1);
         XSSFCell nameCell = sheet.getRow(2).getCell(1);
@@ -334,7 +367,6 @@ public class MonthBill {
         balanceCell.setCellValue(bill.getBalance());
         billIndexCell.setCellValue("බිල් අංකය : " + bill.getYear() + bill.getMonth() + bill.getId());
 
-
         //DEALING WITH THE TABLE
         int i = 0;
         int row = 7;
@@ -353,7 +385,7 @@ public class MonthBill {
         //DONE DEALING WITH THE KG TABLE
 
 
-        FileOutputStream fileOut = new FileOutputStream("src/main/resources/invoice/" + bill.getYear() + bill.getMonth() + bill.getId() + ".xlsx");
+        FileOutputStream fileOut = new FileOutputStream("src/main/resources/invoice/" + bill.getYear() + bill.getMonth()+".xlsx");
         workbook.write(fileOut);
 
         System.out.println("Id column in Excel is updated successfully");

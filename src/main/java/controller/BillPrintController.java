@@ -91,7 +91,7 @@ public class BillPrintController {
 
     private void setBillTable( ) throws SQLException {
         System.out.println("setBillTable Triggered");
-        if (yearComboBox.getValue()!=null && ((String)monthComboBox.getValue()).length()>2){
+        if (yearComboBox.getValue()!=null && (monthComboBox.getValue()!=null||((String)monthComboBox.getValue()).length()>2 )){
             System.out.println("year"+yearComboBox.getValue()+"\n\n Month"+monthComboBox.getValue());
             System.out.println("setBill inside if");
             String sql="SELECT id FROM Customer";
@@ -127,9 +127,11 @@ public class BillPrintController {
                 MonthBill.printBill(tableItem.getBill());
             }
         }
+
     }
 
     public void refreshOnPress(ActionEvent actionEvent) {
+
     }
 
     public void goBack(ActionEvent actionEvent) {
